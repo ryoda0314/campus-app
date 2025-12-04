@@ -1,0 +1,86 @@
+
+> campus-app@0.1.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\ryoda\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\ryoda\OneDrive\デスクトップ\campus-app\package-lock.json
+
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Environments: .env.local
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+Error: Cannot apply unknown utility class `border-border`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+    [2m[at onInvalidCandidate (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:21:1314)][0m
+    [2m[at Te (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:16:36364)][0m
+    [2m[at C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:21:355][0m
+    [2m[at Tr (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:3:1718)][0m
+    [2m[at _ (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:3:1377)][0m
+    [2m[at Se (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:21:172)][0m
+    [2m[at ln (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:38:294)][0m
+    [2m[at process.processTicksAndRejections (node:internal/process/task_queues:105:5)][0m
+    [2m[at async sn (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\tailwindcss\dist\lib.js:38:631)][0m
+    [2m[at async Qr (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\@tailwindcss\node\dist\index.js:10:3385)][0m
+
+thread 'tokio-runtime-worker' (38148) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 22 is not a char boundary; it is inside 'ッ' (bytes 21..24) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_news_[id]_page_actions_ab3bb97b`
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (38148) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 25 is not a char boundary; it is inside 'プ' (bytes 24..27) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_profile_[id]_page_actions_d9aa904b`
+
+thread 'tokio-runtime-worker' (38148) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 26 is not a char boundary; it is inside 'プ' (bytes 24..27) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_projects_[id]_page_actions_1be79301`
+
+thread 'tokio-runtime-worker' (38148) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 23 is not a char boundary; it is inside 'ッ' (bytes 21..24) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_rooms_[id]_page_actions_7438ccb4`
+
+thread 'tokio-runtime-worker' (9688) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 17 is not a char boundary; it is inside 'ク' (bytes 15..18) of `OneDrive_デスクトップ_campus-app__next-internal_server_app__not-found_page_actions_517f2dbf`
+
+thread 'tokio-runtime-worker' (9688) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 20 is not a char boundary; it is inside 'ト' (bytes 18..21) of `OneDrive_デスクトップ_campus-app__next-internal_server_app__global-error_page_actions_d56e7a95`
+
+thread 'tokio-runtime-worker' (28788) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 20 is not a char boundary; it is inside 'ト' (bytes 18..21) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_dm_[id]_page_actions_454d0c1f`
+
+thread 'tokio-runtime-worker' (28788) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 22 is not a char boundary; it is inside 'ッ' (bytes 21..24) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_dashboard_page_actions_3bc1ae17`
+
+thread 'tokio-runtime-worker' (9688) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 19 is not a char boundary; it is inside 'ト' (bytes 18..21) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(auth)_login_page_actions_81fc54c3`
+
+thread 'tokio-runtime-worker' (9688) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 20 is not a char boundary; it is inside 'ト' (bytes 18..21) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(auth)_signup_page_actions_bef3dc4a`
+
+thread 'tokio-runtime-worker' (9688) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 17 is not a char boundary; it is inside 'ク' (bytes 15..18) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_onboarding_page_actions_f7ef155c`
+
+thread 'tokio-runtime-worker' (8496) panicked at turbopack\crates\turbopack-core\src\ident.rs:352:34:
+byte index 17 is not a char boundary; it is inside 'ク' (bytes 15..18) of `OneDrive_デスクトップ_campus-app__next-internal_server_app_(app)_news_page_actions_260d05a5`
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./OneDrive/デスクトップ/campus-app/app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: C:\Users\ryoda\OneDrive\デスクトップ\campus-app\app\globals.css:1:1: Cannot apply unknown utility class `border-border`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+    at Input.error (OneDrive/デスクトップ/campus-app/node_modules/postcss/lib/input.js:135:16) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\a386a_a7833068._.js:4651:22]
+    at Root.error (OneDrive/デスクトップ/campus-app/node_modules/postcss/lib/node.js:146:32) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\a386a_a7833068._.js:928:38]
+    [at Object.Once (C:\Users\ryoda\OneDrive\デスクトップ\campus-app\node_modules\@tailwindcss\postcss\dist\index.js:10:6912)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    at async LazyResult.runAsync (OneDrive/デスクトップ/campus-app/node_modules/postcss/lib/lazy-result.js:293:11) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\a386a_a7833068._.js:6206:21]
+    at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\[root-of-the-server]__42583640._.js:146:36]
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\[root-of-the-server]__76e9002c._.js:443:31]
+
+Import trace:
+  Client Component Browser:
+    ./OneDrive/デスクトップ/campus-app/app/globals.css [Client Component Browser]
+    ./OneDrive/デスクトップ/campus-app/app/layout.tsx [Server Component]
+
+
+    at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\[root-of-the-server]__42583640._.js:146:36])
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23) [C:\Users\ryoda\OneDrive\デスクトップ\campus-app\.next\build\chunks\[root-of-the-server]__76e9002c._.js:443:31])
