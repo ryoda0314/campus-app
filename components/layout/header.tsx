@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { MobileSidebar } from "./sidebar";
 
 export async function Header() {
     const supabase = await createClient();
@@ -22,11 +23,15 @@ export async function Header() {
     }
 
     return (
-        <header className="flex h-16 items-center justify-between border-b bg-background px-6">
+        <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
             <div className="flex items-center gap-4">
-                {/* Breadcrumbs or Page Title could go here */}
+                <MobileSidebar />
+                {/* Mobile logo - shown only on mobile */}
+                <Link href="/dashboard" className="md:hidden">
+                    <span className="text-lg font-bold text-primary">Campus Club</span>
+                </Link>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-5 w-5 text-muted-foreground" />
                     <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
