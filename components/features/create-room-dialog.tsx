@@ -18,7 +18,11 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
-export function CreateRoomDialog() {
+interface CreateRoomDialogProps {
+    onCreated?: () => void;
+}
+
+export function CreateRoomDialog({ onCreated }: CreateRoomDialogProps) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -40,12 +44,20 @@ export function CreateRoomDialog() {
             return;
         }
 
-        const { error } = await supabase.from("rooms").insert({
+        const { data: room, error } = await supabase.from("rooms").insert({
             name,
             description,
             category,
             created_by: user.id,
-        });
+        }).select().single();
+
+        if (!error && room) {
+            // Auto-join the creator to the room
+            await supabase.from("room_members").insert({
+                room_id: room.id,
+                user_id: user.id,
+            });
+        }
 
         setLoading(false);
 
@@ -54,6 +66,7 @@ export function CreateRoomDialog() {
             setName("");
             setDescription("");
             setCategory("");
+            onCreated?.();
             router.refresh();
         } else {
             console.error(error);

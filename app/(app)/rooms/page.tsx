@@ -1,14 +1,32 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, ArrowRight } from "lucide-react";
+import { Users, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { CreateRoomDialog } from "@/components/features/create-room-dialog";
+import { useRooms } from "@/hooks/useRooms";
 
-export default async function RoomsPage() {
-    const supabase = await createClient();
-    const { data: rooms } = await supabase.from("rooms").select("*");
+export default function RoomsPage() {
+    const { rooms, loading, error, refetch } = useRooms();
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <p className="text-muted-foreground">Failed to load rooms</p>
+                <Button variant="outline" onClick={refetch}>Retry</Button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -19,7 +37,7 @@ export default async function RoomsPage() {
                         Find a place to work, discuss, or chill.
                     </p>
                 </div>
-                <CreateRoomDialog />
+                <CreateRoomDialog onCreated={refetch} />
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -30,8 +48,7 @@ export default async function RoomsPage() {
                                 <Badge variant="secondary">{room.category}</Badge>
                                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                     <Users className="h-4 w-4" />
-                                    {/* Mock member count */}
-                                    {Math.floor(Math.random() * 20) + 1}
+                                    {room.member_count || 0}
                                 </div>
                             </div>
                             <CardTitle className="mt-2 text-xl">{room.name}</CardTitle>
@@ -55,3 +72,4 @@ export default async function RoomsPage() {
         </div>
     );
 }
+

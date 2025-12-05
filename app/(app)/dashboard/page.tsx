@@ -21,11 +21,22 @@ export default async function DashboardPage() {
         .eq("id", user?.id)
         .single();
 
-    // Fetch Active Rooms (limit 3)
-    const { data: rooms } = await supabase
+    // Fetch Active Rooms (limit 3) with member counts
+    const { data: roomsData } = await supabase
         .from("rooms")
         .select("*")
         .limit(3);
+
+    // Get member counts for rooms
+    const rooms = roomsData ? await Promise.all(
+        roomsData.map(async (room) => {
+            const { count } = await supabase
+                .from("room_members")
+                .select("*", { count: "exact", head: true })
+                .eq("room_id", room.id);
+            return { ...room, member_count: count || 0 };
+        })
+    ) : [];
 
     // Fetch Latest News (limit 3)
     const { data: news } = await supabase
@@ -51,137 +62,133 @@ export default async function DashboardPage() {
                 </p>
             </div>
 
-            {/* Main Layout: Content + Sidebar */}
-            <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-                {/* Left: Main Content */}
-                <div className="space-y-6">
-                    {/* Cards Grid */}
-                    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                        {/* Active Rooms */}
-                        <Card className="bg-card/50 backdrop-blur-sm">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                    <Users className="h-4 w-4 text-primary" />
-                                    Active Rooms
-                                </CardTitle>
-                                <Link href="/rooms" className="text-xs text-primary hover:underline">
-                                    View All
-                                </Link>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                {rooms?.map((room) => (
-                                    <div
-                                        key={room.id}
-                                        className="flex items-center justify-between rounded-lg border border-border/50 p-3 transition-colors hover:bg-accent/50"
-                                    >
-                                        <div>
-                                            <div className="font-medium text-sm">{room.name}</div>
-                                            <div className="text-xs text-muted-foreground">
-                                                {room.category}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                            <Users className="h-3 w-3" />
-                                            {Math.floor(Math.random() * 20) + 1}
-                                        </div>
-                                    </div>
-                                ))}
-                                {(!rooms || rooms.length === 0) && (
-                                    <div className="text-sm text-muted-foreground py-4 text-center">
-                                        No active rooms
-                                    </div>
-                                )}
-                                <Link href="/rooms">
-                                    <Button variant="outline" size="sm" className="w-full">
-                                        Join a Room
-                                    </Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
+            {/* Top Row: Schedule + Presence Widgets */}
+            <div className="grid gap-6 md:grid-cols-2">
+                <UpcomingScheduleWidget />
+                <PresenceWidget userId={user?.id || ""} />
+            </div>
 
-                        {/* Latest News */}
-                        <Card className="bg-card/50 backdrop-blur-sm">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                    <Sparkles className="h-4 w-4 text-primary" />
-                                    Latest News
-                                </CardTitle>
-                                <Link href="/news" className="text-xs text-primary hover:underline">
-                                    View All
-                                </Link>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                {news?.map((item) => (
-                                    <div key={item.id} className="space-y-1 py-1">
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                                                {item.tags?.[0] || "News"}
-                                            </Badge>
-                                            <span className="text-[10px] text-muted-foreground">
-                                                {new Date(item.created_at).toLocaleDateString()}
-                                            </span>
-                                        </div>
-                                        <div className="font-medium text-sm hover:text-primary cursor-pointer line-clamp-2">
-                                            {item.title}
-                                        </div>
+            {/* Main Content: 2 Column Grid */}
+            <div className="grid gap-6 md:grid-cols-2">
+                {/* Active Rooms */}
+                <Card className="bg-card/50 backdrop-blur-sm">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <Users className="h-4 w-4 text-primary" />
+                            Active Rooms
+                        </CardTitle>
+                        <Link href="/rooms" className="text-xs text-primary hover:underline">
+                            View All
+                        </Link>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {rooms?.map((room) => (
+                            <div
+                                key={room.id}
+                                className="flex items-center justify-between rounded-lg border border-border/50 p-3 transition-colors hover:bg-accent/50"
+                            >
+                                <div>
+                                    <div className="font-medium text-sm">{room.name}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                        {room.category}
                                     </div>
-                                ))}
-                                {(!news || news.length === 0) && (
-                                    <div className="text-sm text-muted-foreground py-4 text-center">
-                                        No news available
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                                </div>
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <Users className="h-3 w-3" />
+                                    {room.member_count || 0}
+                                </div>
+                            </div>
+                        ))}
+                        {(!rooms || rooms.length === 0) && (
+                            <div className="text-sm text-muted-foreground py-4 text-center">
+                                No active rooms
+                            </div>
+                        )}
+                        <Link href="/rooms">
+                            <Button variant="outline" size="sm" className="w-full">
+                                Join a Room
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
 
-                        {/* Upcoming Projects */}
-                        <Card className="bg-card/50 backdrop-blur-sm sm:col-span-2 xl:col-span-1">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                    <Calendar className="h-4 w-4 text-primary" />
-                                    Upcoming
-                                </CardTitle>
-                                <Link href="/projects" className="text-xs text-primary hover:underline">
-                                    View All
-                                </Link>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                {projects?.map((event) => (
-                                    <div
-                                        key={event.id}
-                                        className="flex items-start gap-3 rounded-lg border border-border/50 p-3"
-                                    >
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-                                            <Calendar className="h-4 w-4" />
-                                        </div>
-                                        <div className="min-w-0">
-                                            <div className="font-medium text-sm truncate">{event.title}</div>
-                                            <div className="text-xs text-muted-foreground">
-                                                {new Date(event.date).toLocaleDateString()} @ {event.location || "TBD"}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                                {(!projects || projects.length === 0) && (
-                                    <div className="text-sm text-muted-foreground py-4 text-center">
-                                        No upcoming projects
-                                    </div>
-                                )}
-                                <Link href="/projects">
-                                    <Button size="sm" className="w-full gap-2">
-                                        Create Project <ArrowRight className="h-3 w-3" />
-                                    </Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
+                {/* Latest News */}
+                <Card className="bg-card/50 backdrop-blur-sm">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            Latest News
+                        </CardTitle>
+                        <Link href="/news" className="text-xs text-primary hover:underline">
+                            View All
+                        </Link>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        {news?.map((item) => (
+                            <div key={item.id} className="space-y-1 py-1">
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                                        {item.tags?.[0] || "News"}
+                                    </Badge>
+                                    <span className="text-[10px] text-muted-foreground">
+                                        {new Date(item.created_at).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <div className="font-medium text-sm hover:text-primary cursor-pointer line-clamp-2">
+                                    {item.title}
+                                </div>
+                            </div>
+                        ))}
+                        {(!news || news.length === 0) && (
+                            <div className="text-sm text-muted-foreground py-4 text-center">
+                                No news available
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
 
-                {/* Right: Sidebar Widgets */}
-                <div className="space-y-6">
-                    <PresenceWidget userId={user?.id || ""} />
-                    <UpcomingScheduleWidget />
-                </div>
+                {/* Upcoming Projects - Full Width */}
+                <Card className="bg-card/50 backdrop-blur-sm md:col-span-2">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-primary" />
+                            Upcoming Projects
+                        </CardTitle>
+                        <Link href="/projects" className="text-xs text-primary hover:underline">
+                            View All
+                        </Link>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {projects?.map((event) => (
+                                <div
+                                    key={event.id}
+                                    className="flex items-start gap-3 rounded-lg border border-border/50 p-3"
+                                >
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                                        <Calendar className="h-4 w-4" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="font-medium text-sm truncate">{event.title}</div>
+                                        <div className="text-xs text-muted-foreground">
+                                            {new Date(event.date).toLocaleDateString()} @ {event.location || "TBD"}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {(!projects || projects.length === 0) && (
+                                <div className="text-sm text-muted-foreground py-4 text-center col-span-full">
+                                    No upcoming projects
+                                </div>
+                            )}
+                        </div>
+                        <Link href="/projects" className="block mt-4">
+                            <Button size="sm" className="w-full gap-2">
+                                Create Project <ArrowRight className="h-3 w-3" />
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

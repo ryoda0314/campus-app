@@ -13,9 +13,11 @@ export function useSchedule() {
     const fetchEvents = useCallback(async () => {
         setLoading(true);
         try {
+            const now = new Date().toISOString();
             const { data, error } = await supabase
                 .from("schedule_events")
                 .select("*")
+                .gte("datetime", now)
                 .order("datetime", { ascending: true });
 
             if (error) throw error;
