@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivityRank } from "@/components/features/activity-rank";
 import { EditProfileDialog } from "@/components/features/edit-profile-dialog";
+import { StartDMButton } from "@/components/features/start-dm-button";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -56,11 +57,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                         </div>
                     </div>
                 </div>
-                {isOwnProfile && (
-                    <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-4 gap-2">
+                    {isOwnProfile ? (
                         <EditProfileDialog profile={profile} />
-                    </div>
-                )}
+                    ) : (
+                        <StartDMButton targetUserId={id} />
+                    )}
+                </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3 pt-8">
@@ -123,6 +126,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
                     </Card>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
