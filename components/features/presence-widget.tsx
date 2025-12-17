@@ -17,12 +17,20 @@ import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
 const SPOTS = [
-    "Library 1F",
-    "Library 2F Quiet Zone",
-    "Student Lounge",
-    "Cafeteria",
-    "Building 3 Lab",
-    "Co-op Space",
+    // Taki Plaza
+    "Taki Plaza B2F",
+    "Taki Plaza B1F",
+    "Taki Plaza 1F",
+    "Taki Plaza 2F",
+    // Library
+    "Library B2F",
+    "Library B1F",
+    "Library 2F",
+    "Library 3F",
+    // Other Locations
+    "In Class",
+    "Lab",
+    "Home",
 ];
 
 interface PresenceUser {
