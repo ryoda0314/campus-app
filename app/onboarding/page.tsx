@@ -9,6 +9,10 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X } from "lucide-react";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "@/lib/image-utils";
+import { Slider } from "@/components/ui/slider";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const STEPS = [
     { title: "Profile Info", description: "Let's get to know you" },
@@ -34,6 +38,13 @@ export default function OnboardingPage() {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
+    // Cropping state
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [isCropping, setIsCropping] = useState(false);
+    const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
+
     const router = useRouter();
     const supabase = createClient();
 
@@ -52,8 +63,39 @@ export default function OnboardingPage() {
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setAvatarFile(file);
-            setAvatarPreview(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                setTempImageSrc(reader.result?.toString() || "");
+                setIsCropping(true);
+            });
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    }, []);
+
+    const handleCropConfirm = async () => {
+        if (!tempImageSrc || !croppedAreaPixels) return;
+
+        try {
+            const croppedBlob = await getCroppedImg(
+                tempImageSrc,
+                croppedAreaPixels
+            );
+
+            if (croppedBlob) {
+                const file = new File([croppedBlob], "avatar.png", { type: "image/png" });
+                setAvatarFile(file);
+                setAvatarPreview(URL.createObjectURL(croppedBlob));
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsCropping(false);
+            setTempImageSrc(null);
+            setZoom(1);
         }
     };
 
@@ -83,7 +125,7 @@ export default function OnboardingPage() {
         let avatarUrl = null;
 
         if (avatarFile) {
-            const fileExt = avatarFile.name.split(".").pop();
+            const fileExt = "png"; // Always png due to conversion
             const filePath = `${userId}/${crypto.randomUUID()}.${fileExt}`;
 
             const { error: uploadError } = await supabase.storage
@@ -276,6 +318,47 @@ export default function OnboardingPage() {
                     </CardFooter>
                 </Card>
             </div>
+
+            {/* Crop Dialog */}
+            <Dialog open={isCropping} onOpenChange={setIsCropping}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Edit Photo</DialogTitle>
+                    </DialogHeader>
+                    <div className="relative w-full h-80 bg-black">
+                        {tempImageSrc && (
+                            <Cropper
+                                image={tempImageSrc}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                onCropChange={setCrop}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                            />
+                        )}
+                    </div>
+                    <div className="py-4">
+                        <label className="text-sm font-medium">Zoom</label>
+                        <Slider
+                            value={[zoom]}
+                            min={1}
+                            max={3}
+                            step={0.1}
+                            onValueChange={(value) => setZoom(value[0])}
+                            className="w-full mt-2"
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsCropping(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleCropConfirm}>
+                            Save
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
