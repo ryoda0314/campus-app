@@ -20,7 +20,7 @@ export default function SignupPage() {
         setLoading(true);
         setError(null);
 
-        if (!email.endsWith(".ac.jp")) {
+        if (!email.endsWith(".ac.jp") && !email.endsWith("@gmail.com")) {
             setError("Email must be a valid .ac.jp address.");
             setLoading(false);
             return;
@@ -63,7 +63,7 @@ export default function SignupPage() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <p className="text-[10px] text-muted-foreground">
-                        Must be a valid .ac.jp email address.
+                        Must be a valid .ac.jp email address (or gmail.com for testing).
                     </p>
                 </div>
                 <div className="space-y-2">
