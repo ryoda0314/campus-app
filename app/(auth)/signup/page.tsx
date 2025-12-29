@@ -11,10 +11,7 @@ import { useRouter } from "next/navigation";
 export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
-    const supabase = createClient();
+    const [success, setSuccess] = useState(false);
 
     const handleSignup = async () => {
         setLoading(true);
@@ -35,14 +32,33 @@ export default function SignupPage() {
             setError(error.message);
             setLoading(false);
         } else {
-            // Assuming auto-confirm is off or user needs to check email.
-            // For this demo, we might assume auto-confirm or just redirect to onboarding if successful.
-            // If email confirmation is required, we should show a message.
-            // For now, let's redirect to onboarding.
-            router.push("/onboarding");
-            router.refresh();
+            setSuccess(true);
         }
     };
+
+    if (success) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Check your email</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                        We have sent a verification email to <strong>{email}</strong>.
+                        Please check your inbox and click the link to verify your account.
+                    </p>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                    <p className="text-xs text-muted-foreground">
+                        Verified?{" "}
+                        <Link href="/login" className="text-primary hover:underline">
+                            Login
+                        </Link>
+                    </p>
+                </CardFooter>
+            </Card>
+        );
+    }
 
     return (
         <Card>
