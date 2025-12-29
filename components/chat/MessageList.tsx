@@ -97,7 +97,7 @@ export function MessageList({
     return (
         <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto"
+            className="flex-1 overflow-y-auto overscroll-y-contain"
             onScroll={handleScroll}
         >
             {/* Loading more indicator */}
