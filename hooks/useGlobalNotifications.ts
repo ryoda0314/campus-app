@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useWebPush } from "@/hooks/useWebPush";
+
 
 export function useGlobalNotifications(currentUserId: string | undefined) {
     const supabase = createClient();
