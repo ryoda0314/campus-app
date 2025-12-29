@@ -73,15 +73,6 @@ Deno.serve(async (req) => {
         const notifications = []
 
         for (const member of recipients) {
-            // One user might have multiple subscriptions (multiple devices), handled by !inner join returning array?
-            // Actually select returns array of objects usually.
-            // Assuming push_subscriptions is one-to-many from user.
-            // The join result structure: { user_id: '...', push_subscriptions: { endpoint: ... } } if one-to-one?
-            // Or { user_id: '...', push_subscriptions: [{ endpoint: ... }] } if one-to-many.
-
-            // Supabase join syntax usually returns an array for one-to-many if inferred correctly.
-            // Let's iterate safely.
-
             const subs = Array.isArray(member.push_subscriptions)
                 ? member.push_subscriptions
                 : [member.push_subscriptions]
