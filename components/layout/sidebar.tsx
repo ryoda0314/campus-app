@@ -12,6 +12,7 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
+    SheetDescription,
 } from "@/components/ui/sheet";
 import {
     LayoutDashboard,
@@ -270,6 +271,9 @@ export function MobileSidebar() {
                     <SheetTitle className="text-xl font-bold text-primary">
                         Campus Club
                     </SheetTitle>
+                    <SheetDescription className="sr-only">
+                        Mobile navigation menu
+                    </SheetDescription>
                     <Button variant="ghost" size="icon" className="relative mr-8">
                         <Bell className="h-5 w-5 text-muted-foreground" />
                         <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
