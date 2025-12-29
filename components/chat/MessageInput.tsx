@@ -82,8 +82,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
 
     const isDisabled = disabled || sending || uploading;
 
-    return (
-        <div className="border-t bg-background p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="border-t bg-background px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {/* Pending images preview */}
             {pendingImages.length > 0 && (
                 <div className="flex gap-2 mb-3 overflow-x-auto pb-2 pt-4 px-2">
@@ -108,7 +107,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
             )}
 
             {/* Input area */}
-            <div className="flex gap-2 items-end">
+            <div className="flex gap-3 items-end">
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -125,9 +124,9 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
                     size="icon"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isDisabled || pendingImages.length >= 5}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 rounded-full h-10 w-10 hover:bg-muted"
                 >
-                    <ImagePlus className="h-5 w-5" />
+                    <ImagePlus className="h-6 w-6 text-muted-foreground" />
                 </Button>
 
                 <Textarea
@@ -137,9 +136,25 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     disabled={isDisabled}
-                    className="min-h-[40px] max-h-[120px] resize-none bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+                    className="min-h-[44px] max-h-[120px] resize-none bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary rounded-2xl px-4 py-3"
                     rows={1}
                 />
+
+                <Button
+                    type="button"
+                    size="icon"
+                    onClick={handleSend}
+                    disabled={isDisabled || (!content.trim() && pendingImages.length === 0)}
+                    className="flex-shrink-0 rounded-full h-10 w-10"
+                >
+                    {sending || uploading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                        <Send className="h-5 w-5" />
+                    )}
+                </Button>
+            </div>
+        </div>
 
                 <Button
                     type="button"
@@ -154,7 +169,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
                         <Send className="h-5 w-5" />
                     )}
                 </Button>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
