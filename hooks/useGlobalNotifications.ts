@@ -103,7 +103,7 @@ export function useGlobalNotifications(currentUserId: string | undefined) {
                 }
             )
             .subscribe((status) => {
-                console.log("GlobalNotifications: Subscription status:", status: ", status);
+                console.log("GlobalNotifications: Subscription status:", status);
             });
 
         return () => {
