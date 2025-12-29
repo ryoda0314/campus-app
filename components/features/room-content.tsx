@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, X, MoreVertical, Settings, LogOut, Users } from "lucide-react";
