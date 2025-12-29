@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 import { RoomChat } from "@/components/chat";
-import { RoomMembers } from "@/components/features/room-members";
+// import { RoomMembers } from "@/components/features/room-members";
 
 interface RoomContentProps {
     roomId: string;
@@ -17,7 +17,7 @@ export function RoomContent({ roomId, currentUserId, roomName, roomDescription }
     const [showSearch, setShowSearch] = useState(false);
 
     return (
-        <div className="flex h-[calc(100vh-8rem)] gap-4">
+        <div className="flex h-full gap-4">
             {/* Main Chat Area */}
             <div className="flex flex-1 flex-col rounded-lg border bg-card shadow-sm overflow-hidden">
                 {/* Chat Header with Search */}
@@ -48,11 +48,6 @@ export function RoomContent({ roomId, currentUserId, roomName, roomDescription }
                     showSearch={showSearch}
                     onCloseSearch={() => setShowSearch(false)}
                 />
-            </div>
-
-            {/* Sidebar (Members) */}
-            <div className="hidden w-72 flex-shrink-0 lg:block">
-                <RoomMembers roomId={roomId} />
             </div>
         </div>
     );

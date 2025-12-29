@@ -1,13 +1,22 @@
-import { Sidebar } from "./sidebar";
-import { Header } from "./header";
+"use client";
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
+import { Sidebar } from "./sidebar";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+export function AppLayout({ children, header }: { children: React.ReactNode; header: React.ReactNode }) {
+    const pathname = usePathname();
+    const isRoomPage = pathname?.startsWith("/rooms/");
+
     return (
         <div className="flex h-screen overflow-hidden bg-background">
             <Sidebar />
             <div className="flex flex-1 flex-col overflow-hidden">
-                <Header />
-                <main className="flex-1 overflow-y-auto p-6">
+                {header}
+                <main className={cn(
+                    "flex-1 overflow-y-auto",
+                    isRoomPage ? "p-0 overflow-hidden" : "p-6"
+                )}>
                     {children}
                 </main>
             </div>
