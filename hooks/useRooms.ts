@@ -160,6 +160,10 @@ export function useRoomMembers(roomId: string) {
 }
 
 export function useRooms() {
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const supabase = useMemo(() => createClient(), []);
     const [joinedRoomIds, setJoinedRoomIds] = useState<Set<string>>(new Set());
 
     const fetchRooms = useCallback(async () => {
