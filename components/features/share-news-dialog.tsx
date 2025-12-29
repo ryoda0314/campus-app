@@ -120,20 +120,44 @@ export function ShareNewsDialog({
 
             if (shareType === "room") {
                 // Send to room chat
-                const { error } = await supabase.from("messages").insert({
+                const { data: msgData, error: msgError } = await supabase.from("messages").insert({
                     room_id: selectedId,
                     content: message.trim(),
                     user_id: user.id,
-                });
-                if (error) throw error;
+                    has_links: true,
+                }).select().single();
+
+                if (msgError) throw msgError;
+
+                if (msgData && newsUrl) {
+                    await supabase.from("message_links").insert({
+                        message_id: msgData.id,
+                        url: newsUrl,
+                        og_title: newsTitle,
+                        og_description: "Campus App News",
+                        domain: window.location.hostname,
+                    });
+                }
             } else {
                 // Send to DM
-                const { error } = await supabase.from("dm_messages").insert({
+                const { data: msgData, error: msgError } = await supabase.from("dm_messages").insert({
                     conversation_id: selectedId,
                     content: message.trim(),
                     sender_id: user.id,
-                });
-                if (error) throw error;
+                    has_links: true,
+                }).select().single();
+
+                if (msgError) throw msgError;
+
+                if (msgData && newsUrl) {
+                    await supabase.from("dm_message_links").insert({
+                        message_id: msgData.id,
+                        url: newsUrl,
+                        title: newsTitle,
+                        description: "Campus App News",
+                        site_name: "Campus App",
+                    });
+                }
             }
 
             onOpenChange(false);
