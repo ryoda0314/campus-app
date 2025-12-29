@@ -86,7 +86,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
         <div className="border-t bg-card/50 p-4">
             {/* Pending images preview */}
             {pendingImages.length > 0 && (
-                <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+                <div className="flex gap-2 mb-3 overflow-x-auto pb-2 pt-4 px-2">
                     {pendingImages.map((img, i) => (
                         <div key={i} className="relative flex-shrink-0">
                             <Image

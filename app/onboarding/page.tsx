@@ -19,7 +19,7 @@ const INTEREST_OPTIONS = ["Startup", "AI", "Research", "Design", "Engineering", 
 export default function OnboardingPage() {
     const [step, setStep] = useState(0);
     const [displayName, setDisplayName] = useState("");
-    const [university, setUniversity] = useState("");
+    const [university, setUniversity] = useState("Institute of Science Tokyo (東京科学大学)");
     const [faculty, setFaculty] = useState("");
     const [grade, setGrade] = useState("");
     const [interests, setInterests] = useState<string[]>([]);
@@ -119,10 +119,13 @@ export default function OnboardingPage() {
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">University</label>
                                     <Input
-                                        placeholder="e.g., University of Tokyo"
-                                        value={university}
-                                        onChange={(e) => setUniversity(e.target.value)}
+                                        disabled
+                                        value="Institute of Science Tokyo (東京科学大学)"
+                                        className="bg-muted text-muted-foreground"
                                     />
+                                    <p className="text-xs text-muted-foreground">
+                                        Currently limited to Institute of Science Tokyo students.
+                                    </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">

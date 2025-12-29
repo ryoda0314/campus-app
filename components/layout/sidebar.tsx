@@ -80,6 +80,15 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             }
         };
         checkAdmin();
+
+        // Listen for profile updates
+        const handleProfileUpdate = () => {
+            console.log("Sidebar: Profile Updated Event Received");
+            checkAdmin();
+        };
+
+        window.addEventListener("profile-updated", handleProfileUpdate);
+        return () => window.removeEventListener("profile-updated", handleProfileUpdate);
     }, [supabase]);
 
     const handleLogout = async () => {
