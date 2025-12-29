@@ -12,7 +12,7 @@ interface RoomMember {
     } | null;
 }
 
-interface Room {
+export interface Room {
     id: string;
     name: string;
     description: string | null;

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { CreateRoomDialog } from "@/components/features/create-room-dialog";
-import { useRooms } from "@/hooks/useRooms";
+import { useRooms, Room } from "@/hooks/useRooms";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -32,7 +32,7 @@ export default function RoomsPage() {
 
     const joinedRooms = rooms.filter(room => joinedRoomIds.has(room.id));
 
-    const RoomGrid = ({ rooms }: { rooms: typeof rooms }) => (
+    const RoomGrid = ({ rooms }: { rooms: Room[] }) => (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {rooms?.map((room) => (
                 <Card key={room.id} className="flex flex-col">
