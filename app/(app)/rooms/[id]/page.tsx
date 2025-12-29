@@ -43,11 +43,20 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             user_id: user.id,
         });
 
+        // Fetch profile for display name
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("display_name")
+            .eq("id", user.id)
+            .single();
+
+        const displayName = profile?.display_name || user.email?.split("@")[0] || "Someone";
+
         // Send system message about joining
         await supabase.from("messages").insert({
             room_id: id,
             kind: "system",
-            content: `${user.email?.split("@")[0]} がルームに参加しました`,
+            content: `${displayName} がルームに参加しました`,
         });
     }
 

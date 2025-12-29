@@ -142,7 +142,7 @@ export function useRoomMembers(roomId: string) {
                 .insert({
                     room_id: roomId,
                     user_id: user.id,
-                    content: `${displayName} joined the room.`,
+                    content: `${displayName} がルームに参加しました`,
                     kind: "system",
                 });
 
