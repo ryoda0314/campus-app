@@ -2,23 +2,34 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useWebPush } from "@/hooks/useWebPush";
 
 export function useGlobalNotifications(currentUserId: string | undefined) {
     const supabase = createClient();
     const [myRoomIds, setMyRoomIds] = useState<Set<string>>(new Set());
     const processedMessageIds = useRef<Set<string>>(new Set());
 
+    const { subscribe: subscribeToWebPush } = useWebPush();
+
     // Request permissions
     useEffect(() => {
         if ("Notification" in window) {
             console.log("Notification permission status:", Notification.permission);
+
+            const handlePermission = async (permission: NotificationPermission) => {
+                if (permission === "granted") {
+                    console.log("Permission granted, subscribing to Web Push...");
+                    await subscribeToWebPush();
+                }
+            };
+
             if (Notification.permission === "default") {
-                Notification.requestPermission().then(perm => {
-                    console.log("Notification permission requested:", perm);
-                });
+                Notification.requestPermission().then(handlePermission);
+            } else if (Notification.permission === "granted") {
+                handlePermission("granted");
             }
         }
-    }, []);
+    }, [subscribeToWebPush]);
 
     // Fetch my rooms
     useEffect(() => {
