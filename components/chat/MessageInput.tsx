@@ -83,7 +83,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
     const isDisabled = disabled || sending || uploading;
 
     return (
-        <div className="border-t bg-background px-4 py-3 pb-[calc(2rem+env(safe-area-inset-bottom))]">
+        <div className="border-t bg-background px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {/* Pending images preview */}
             {pendingImages.length > 0 && (
                 <div className="flex gap-2 mb-3 overflow-x-auto pb-2 pt-4 px-2">
