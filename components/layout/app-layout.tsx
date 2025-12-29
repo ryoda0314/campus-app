@@ -9,7 +9,7 @@ export function AppLayout({ children, header }: { children: React.ReactNode; hea
     const isRoomPage = pathname?.startsWith("/rooms/");
 
     return (
-        <div className="flex h-[100dvh] overflow-hidden bg-background">
+        <div className="flex fixed inset-0 overflow-hidden bg-background">
             <Sidebar />
             <div className="flex flex-1 flex-col overflow-hidden">
                 {header}
