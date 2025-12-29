@@ -160,24 +160,28 @@ export function useRoomMembers(roomId: string) {
 }
 
 export function useRooms() {
-    const [rooms, setRooms] = useState<Room[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const supabase = useMemo(() => createClient(), []);
+    const [joinedRoomIds, setJoinedRoomIds] = useState<Set<string>>(new Set());
 
     const fetchRooms = useCallback(async () => {
         setLoading(true);
         setError(null);
 
         try {
-            // Get rooms with member counts
-            const { data: roomsData, error: fetchError } = await supabase
-                .from("rooms")
-                .select("*")
-                .order("created_at", { ascending: false });
+            const { data: { user } } = await supabase.auth.getUser();
 
-            if (fetchError) {
-                throw fetchError;
+            // Parallel fetch: Rooms and My Memberships
+            const [roomsResult, membershipsResult] = await Promise.all([
+                supabase.from("rooms").select("*").order("created_at", { ascending: false }),
+                user ? supabase.from("room_members").select("room_id").eq("user_id", user.id) : null
+            ]);
+
+            const { data: roomsData, error: fetchError } = roomsResult;
+
+            if (fetchError) throw fetchError;
+
+            // Process Memberships
+            if (membershipsResult?.data) {
+                setJoinedRoomIds(new Set(membershipsResult.data.map(m => m.room_id)));
             }
 
             if (roomsData) {
@@ -210,5 +214,5 @@ export function useRooms() {
         fetchRooms();
     }, [fetchRooms]);
 
-    return { rooms, loading, error, refetch: fetchRooms };
+    return { rooms, joinedRoomIds, loading, error, refetch: fetchRooms };
 }

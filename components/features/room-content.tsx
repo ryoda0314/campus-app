@@ -2,9 +2,18 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, X } from "lucide-react";
+import { Search, X, MoreVertical, Settings, LogOut } from "lucide-react";
 import { RoomChat } from "@/components/chat";
-// import { RoomMembers } from "@/components/features/room-members";
+import { useRoomMembers } from "@/hooks/useRooms";
+import { useRouter } from "next/navigation";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface RoomContentProps {
     roomId: string;
@@ -15,6 +24,8 @@ interface RoomContentProps {
 
 export function RoomContent({ roomId, currentUserId, roomName, roomDescription }: RoomContentProps) {
     const [showSearch, setShowSearch] = useState(false);
+    const { leaveRoom } = useRoomMembers(roomId);
+    const router = useRouter();
 
     return (
         <div className="flex h-full gap-4">
@@ -39,6 +50,34 @@ export function RoomContent({ roomId, currentUserId, roomName, roomDescription }
                             <Search className="h-5 w-5" />
                         )}
                     </Button>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-5 w-5" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Room Settings</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                                <Settings className="h-4 w-4 mr-2" />
+                                Settings
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={async () => {
+                                    if (confirm("Are you sure you want to leave this room?")) {
+                                        await leaveRoom();
+                                        router.push("/rooms");
+                                    }
+                                }}
+                            >
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Leave Room
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
 
                 {/* Chat Component */}

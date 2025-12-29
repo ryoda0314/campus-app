@@ -8,8 +8,10 @@ import Link from "next/link";
 import { CreateRoomDialog } from "@/components/features/create-room-dialog";
 import { useRooms } from "@/hooks/useRooms";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 export default function RoomsPage() {
-    const { rooms, loading, error, refetch } = useRooms();
+    const { rooms, joinedRoomIds, loading, error, refetch } = useRooms();
 
     if (loading) {
         return (
@@ -28,6 +30,40 @@ export default function RoomsPage() {
         );
     }
 
+    const joinedRooms = rooms.filter(room => joinedRoomIds.has(room.id));
+
+    const RoomGrid = ({ rooms }: { rooms: typeof rooms }) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {rooms?.map((room) => (
+                <Card key={room.id} className="flex flex-col">
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <Badge variant="secondary">{room.category}</Badge>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <Users className="h-4 w-4" />
+                                {room.member_count || 0}
+                            </div>
+                        </div>
+                        <CardTitle className="mt-2 text-xl">{room.name}</CardTitle>
+                        <CardDescription>{room.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="mt-auto pt-0">
+                        <Link href={`/rooms/${room.id}`}>
+                            <Button className="w-full gap-2">
+                                Enter Room <ArrowRight className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            ))}
+            {(!rooms || rooms.length === 0) && (
+                <div className="col-span-full text-center text-muted-foreground py-10">
+                    No rooms available.
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -40,35 +76,26 @@ export default function RoomsPage() {
                 <CreateRoomDialog onCreated={refetch} />
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {rooms?.map((room) => (
-                    <Card key={room.id} className="flex flex-col">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <Badge variant="secondary">{room.category}</Badge>
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                    <Users className="h-4 w-4" />
-                                    {room.member_count || 0}
-                                </div>
-                            </div>
-                            <CardTitle className="mt-2 text-xl">{room.name}</CardTitle>
-                            <CardDescription>{room.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="mt-auto pt-0">
-                            <Link href={`/rooms/${room.id}`}>
-                                <Button className="w-full gap-2">
-                                    Enter Room <ArrowRight className="h-4 w-4" />
-                                </Button>
-                            </Link>
-                        </CardContent>
-                    </Card>
-                ))}
-                {(!rooms || rooms.length === 0) && (
-                    <div className="col-span-full text-center text-muted-foreground py-10">
-                        No rooms available. Create one to get started!
-                    </div>
-                )}
-            </div>
+            <Tabs defaultValue="list" className="w-full">
+                <TabsList>
+                    <TabsTrigger value="list">Room List</TabsTrigger>
+                    <TabsTrigger value="joined">Joined Rooms</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="list" className="mt-6">
+                    <RoomGrid rooms={rooms} />
+                </TabsContent>
+
+                <TabsContent value="joined" className="mt-6">
+                    {joinedRooms.length > 0 ? (
+                        <RoomGrid rooms={joinedRooms} />
+                    ) : (
+                        <div className="text-center text-muted-foreground py-10 border rounded-lg border-dashed">
+                            You haven't joined any rooms yet.
+                        </div>
+                    )}
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
