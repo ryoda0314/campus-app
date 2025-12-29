@@ -1,6 +1,25 @@
 import { AppLayout } from "@/components/layout/app-layout";
 import { Header } from "@/components/layout/header";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        redirect("/login");
+    }
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_onboarded")
+        .eq("id", user.id)
+        .single();
+
+    if (!profile?.is_onboarded) {
+        redirect("/onboarding");
+    }
+
     return <AppLayout header={<Header />}>{children}</AppLayout>;
 }
