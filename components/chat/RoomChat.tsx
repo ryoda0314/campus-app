@@ -114,7 +114,7 @@ export function RoomChat({ roomId, currentUserId, showSearch = false, onCloseSea
                 <MessageInput
                     roomId={roomId}
                     onSend={handleSend}
-                    placeholder="メッセージを入力... (Enterで送信、Shift+Enterで改行)"
+                    placeholder="メッセージを入力..."
                 />
             </div>
 
