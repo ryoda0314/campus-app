@@ -50,7 +50,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             .eq("id", user.id)
             .single();
 
-        const displayName = profile?.display_name || user.email?.split("@")[0] || "Someone";
+        const displayName = profile?.display_name || "Unknown User";
 
         // Send system message about joining
         await supabase.from("messages").insert({
