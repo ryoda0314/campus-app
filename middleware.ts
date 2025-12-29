@@ -1,7 +1,11 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+    const path = request.nextUrl.pathname;
+    if (path === '/manifest.json' || path === '/sw.js' || path.startsWith('/workbox-')) {
+        return NextResponse.next(); // Bypass auth for PWA files
+    }
     return await updateSession(request);
 }
 
