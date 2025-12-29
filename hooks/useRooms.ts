@@ -115,6 +115,7 @@ export function useRoomMembers(roomId: string) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return false;
 
+        // 1. Join the room
         const { error } = await supabase
             .from("room_members")
             .insert({
@@ -125,6 +126,26 @@ export function useRoomMembers(roomId: string) {
         if (!error) {
             setIsMember(true);
             await fetchMembers();
+
+            // 2. Fetch profile for display name
+            const { data: profile } = await supabase
+                .from("profiles")
+                .select("display_name")
+                .eq("id", user.id)
+                .single();
+
+            const displayName = profile?.display_name || user.email?.split("@")[0] || "Someone";
+
+            // 3. Insert system message
+            await supabase
+                .from("messages")
+                .insert({
+                    room_id: roomId,
+                    user_id: user.id,
+                    content: `${displayName} joined the room.`,
+                    kind: "system",
+                });
+
             return true;
         }
         return false;
