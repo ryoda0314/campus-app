@@ -7,13 +7,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Campus Club",
+    title: "SwaLo",
     description: "Exclusive community for ambitious students",
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
         statusBarStyle: "black-translucent",
-        title: "Campus Club",
+        title: "SwaLo",
     },
 };
 
