@@ -9,7 +9,7 @@ export async function Header() {
                 <MobileSidebar />
                 {/* Mobile logo - shown only on mobile */}
                 <Link href="/dashboard" className="md:hidden">
-                    <span className="text-lg font-bold text-primary">Campus Club</span>
+                    <span className="text-lg font-bold text-primary">SwaLo</span>
                 </Link>
             </div>
         </header>

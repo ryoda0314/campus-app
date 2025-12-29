@@ -242,7 +242,7 @@ export function Sidebar() {
         <div className="hidden md:flex h-full w-64 flex-col border-r bg-card text-card-foreground">
             <div className="flex h-16 items-center justify-between px-6">
                 <h1 className="text-xl font-bold tracking-tight text-primary">
-                    Campus Club
+                    SwaLo
                 </h1>
                 <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-5 w-5 text-muted-foreground" />
@@ -269,7 +269,7 @@ export function MobileSidebar() {
             <SheetContent side="left" className="w-64 p-0">
                 <SheetHeader className="flex flex-row items-center justify-between border-b px-6 py-4 space-y-0">
                     <SheetTitle className="text-xl font-bold text-primary">
-                        Campus Club
+                        SwaLo
                     </SheetTitle>
                     <SheetDescription className="sr-only">
                         Mobile navigation menu
