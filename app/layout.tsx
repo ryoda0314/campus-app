@@ -9,6 +9,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Campus Club",
     description: "Exclusive community for ambitious students",
+    manifest: "/manifest.json",
+};
+
+export const viewport = {
+    themeColor: "#000000",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
 };
 
 export default function RootLayout({
