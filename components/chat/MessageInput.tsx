@@ -82,6 +82,7 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
 
     const isDisabled = disabled || sending || uploading;
 
+    return (
         <div className="border-t bg-background px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {/* Pending images preview */}
             {pendingImages.length > 0 && (
@@ -155,21 +156,5 @@ export function MessageInput({ roomId, onSend, placeholder = "Type a message..."
                 </Button>
             </div>
         </div>
-
-                <Button
-                    type="button"
-                    size="icon"
-                    onClick={handleSend}
-                    disabled={isDisabled || (!content.trim() && pendingImages.length === 0)}
-                    className="flex-shrink-0"
-                >
-                    {sending || uploading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                        <Send className="h-5 w-5" />
-                    )}
-                </Button>
-            </div >
-        </div >
     );
 }
