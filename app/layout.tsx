@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     title: "Campus Club",
     description: "Exclusive community for ambitious students",
     manifest: "/manifest.json",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "black-translucent",
+        title: "Campus Club",
+    },
 };
 
 export const viewport = {
