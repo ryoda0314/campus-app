@@ -31,6 +31,7 @@ export default function RoomsPage() {
     }
 
     const joinedRooms = rooms.filter(room => joinedRoomIds.has(room.id));
+    const unjoinedRooms = rooms.filter(room => !joinedRoomIds.has(room.id));
 
     const RoomGrid = ({ rooms }: { rooms: Room[] }) => (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -79,7 +80,7 @@ export default function RoomsPage() {
             <Tabs defaultValue="joined" className="w-full">
                 <TabsList>
                     <TabsTrigger value="joined">Joined Rooms</TabsTrigger>
-                    <TabsTrigger value="list">All Rooms</TabsTrigger>
+                    <TabsTrigger value="discover">Discover</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="joined" className="mt-6">
@@ -92,8 +93,14 @@ export default function RoomsPage() {
                     )}
                 </TabsContent>
 
-                <TabsContent value="list" className="mt-6">
-                    <RoomGrid rooms={rooms} />
+                <TabsContent value="discover" className="mt-6">
+                    {unjoinedRooms.length > 0 ? (
+                        <RoomGrid rooms={unjoinedRooms} />
+                    ) : (
+                        <div className="text-center text-muted-foreground py-10 border rounded-lg border-dashed">
+                            You have joined all available rooms! creates one?
+                        </div>
+                    )}
                 </TabsContent>
             </Tabs>
         </div>

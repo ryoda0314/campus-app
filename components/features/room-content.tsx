@@ -1,11 +1,10 @@
-"use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, X, MoreVertical, Settings, LogOut, Users } from "lucide-react";
+import { Search, X, MoreVertical, Settings, LogOut, Users, ChevronLeft } from "lucide-react";
 import { RoomChat } from "@/components/chat";
 import { useRoomMembers } from "@/hooks/useRooms";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ActivityRank } from "@/components/features/activity-rank";
 import {
@@ -42,11 +41,19 @@ export function RoomContent({ roomId, currentUserId, roomName, roomDescription }
             <div className="flex flex-1 flex-col rounded-lg border bg-card shadow-sm overflow-hidden">
                 {/* Chat Header with Search */}
                 <div className="flex items-center justify-between border-b p-4 bg-card">
-                    <div>
-                        <h2 className="text-lg font-semibold">{roomName}</h2>
-                        {roomDescription && (
-                            <p className="text-sm text-muted-foreground">{roomDescription}</p>
-                        )}
+                    <div className="flex items-center gap-3">
+                        <Link href="/rooms">
+                            <Button variant="ghost" size="icon" className="shrink-0">
+                                <ChevronLeft className="h-5 w-5" />
+                                <span className="sr-only">Back to Rooms</span>
+                            </Button>
+                        </Link>
+                        <div>
+                            <h2 className="text-lg font-semibold">{roomName}</h2>
+                            {roomDescription && (
+                                <p className="text-sm text-muted-foreground">{roomDescription}</p>
+                            )}
+                        </div>
                     </div>
                     <Button
                         variant={showSearch ? "secondary" : "ghost"}
