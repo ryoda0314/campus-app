@@ -79,6 +79,17 @@ export function RoomChat({ roomId, currentUserId, showSearch = false, onCloseSea
     // Handle jump to message from search
     const handleJumpToMessage = useCallback((messageId: string) => {
         onCloseSearch?.();
+
+        // Small delay to allow search panel to close
+        setTimeout(() => {
+            const element = document.getElementById(`message-${messageId}`);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                // Optional: Flash highlights
+                element.classList.add("bg-primary/10");
+                setTimeout(() => element.classList.remove("bg-primary/10"), 2000);
+            }
+        }, 100);
     }, [onCloseSearch]);
 
     // If thread is active, show thread view
@@ -93,7 +104,7 @@ export function RoomChat({ roomId, currentUserId, showSearch = false, onCloseSea
     }
 
     return (
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden relative">
             {/* Main chat area */}
             <div className="flex flex-col flex-1 min-w-0">
                 {/* Message list */}
@@ -118,9 +129,9 @@ export function RoomChat({ roomId, currentUserId, showSearch = false, onCloseSea
                 />
             </div>
 
-            {/* Right panel (Search only) */}
+            {/* Right panel (Search) */}
             {showSearch && (
-                <div className="w-80 flex-shrink-0 hidden lg:flex">
+                <div className="absolute inset-0 z-50 bg-background lg:static lg:w-80 lg:flex-shrink-0 lg:border-l lg:z-auto">
                     <SearchPanel
                         roomId={roomId}
                         onClose={handleCloseSearch}

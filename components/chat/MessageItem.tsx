@@ -122,7 +122,7 @@ export function MessageItem({
     }
 
     return (
-        <div className="flex gap-3 py-3 px-4 hover:bg-muted/30 group transition-colors">
+        <div id={`message-${message.id}`} className="flex gap-3 py-3 px-4 hover:bg-muted/30 group transition-colors">
             {/* Avatar */}
             <Avatar className="h-9 w-9 flex-shrink-0">
                 <AvatarImage src={message.profiles?.avatar_url || undefined} />
