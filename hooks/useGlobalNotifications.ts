@@ -10,8 +10,13 @@ export function useGlobalNotifications(currentUserId: string | undefined) {
 
     // Request permissions
     useEffect(() => {
-        if ("Notification" in window && Notification.permission === "default") {
-            Notification.requestPermission();
+        if ("Notification" in window) {
+            console.log("Notification permission status:", Notification.permission);
+            if (Notification.permission === "default") {
+                Notification.requestPermission().then(perm => {
+                    console.log("Notification permission requested:", perm);
+                });
+            }
         }
     }, []);
 
@@ -26,7 +31,9 @@ export function useGlobalNotifications(currentUserId: string | undefined) {
                 .eq("user_id", currentUserId);
 
             if (data) {
-                setMyRoomIds(new Set(data.map(r => r.room_id)));
+                const ids = new Set(data.map(r => r.room_id));
+                console.log("GlobalNotifications: Joined rooms:", ids);
+                setMyRoomIds(ids);
             }
         };
 
@@ -48,6 +55,7 @@ export function useGlobalNotifications(currentUserId: string | undefined) {
                 },
                 async (payload) => {
                     const newMessage = payload.new;
+                    console.log("GlobalNotifications: New message received:", newMessage);
 
                     // Filter: Only my rooms, not my own messages
                     if (
@@ -73,17 +81,30 @@ export function useGlobalNotifications(currentUserId: string | undefined) {
                         const notificationTitle = `New message from ${senderName}`;
                         const notificationBody = newMessage.content || "Sent an attachment";
 
-                        if (document.hidden && Notification.permission === "granted") {
+                        console.log("GlobalNotifications: Triggering notification", { notificationTitle, notificationBody });
+
+                        if (Notification.permission === "granted") {
+                            // Removed document.hidden check for debugging
                             new Notification(notificationTitle, {
                                 body: notificationBody,
                                 icon: "/icon-192x192.png", // Assuming PWA icon exists
                                 tag: newMessage.room_id // Group by room
                             });
+                        } else {
+                            console.log("GlobalNotifications: Permission not granted");
                         }
+                    } else {
+                        console.log("GlobalNotifications: Message skipped", {
+                            isOwn: newMessage.user_id === currentUserId,
+                            inRoom: myRoomIds.has(newMessage.room_id),
+                            processed: processedMessageIds.current.has(newMessage.id)
+                        });
                     }
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log("GlobalNotifications: Subscription status:", status: ", status);
+            });
 
         return () => {
             supabase.removeChannel(channel);
