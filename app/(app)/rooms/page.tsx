@@ -76,15 +76,11 @@ export default function RoomsPage() {
                 <CreateRoomDialog onCreated={refetch} />
             </div>
 
-            <Tabs defaultValue="list" className="w-full">
+            <Tabs defaultValue="joined" className="w-full">
                 <TabsList>
-                    <TabsTrigger value="list">Room List</TabsTrigger>
                     <TabsTrigger value="joined">Joined Rooms</TabsTrigger>
+                    <TabsTrigger value="list">All Rooms</TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="list" className="mt-6">
-                    <RoomGrid rooms={rooms} />
-                </TabsContent>
 
                 <TabsContent value="joined" className="mt-6">
                     {joinedRooms.length > 0 ? (
@@ -94,6 +90,10 @@ export default function RoomsPage() {
                             You haven't joined any rooms yet.
                         </div>
                     )}
+                </TabsContent>
+
+                <TabsContent value="list" className="mt-6">
+                    <RoomGrid rooms={rooms} />
                 </TabsContent>
             </Tabs>
         </div>
