@@ -1,15 +1,15 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Upload, X } from "lucide-react";
 
 const STEPS = [
-    { title: "Basic Info", description: "Tell us about yourself" },
+    { title: "Profile Info", description: "Let's get to know you" },
     { title: "Interests", description: "What are you into?" },
     { title: "Goal", description: "What's your current focus?" },
 ];
@@ -18,7 +18,8 @@ const INTEREST_OPTIONS = ["Startup", "AI", "Research", "Design", "Engineering", 
 
 export default function OnboardingPage() {
     const [step, setStep] = useState(0);
-    const [displayName, setDisplayName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [university, setUniversity] = useState("Institute of Science Tokyo (東京科学大学)");
     const [faculty, setFaculty] = useState("");
     const [grade, setGrade] = useState("");
@@ -26,6 +27,11 @@ export default function OnboardingPage() {
     const [goal, setGoal] = useState("");
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
+
+    // Avatar state
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
     const router = useRouter();
     const supabase = createClient();
 
@@ -41,6 +47,14 @@ export default function OnboardingPage() {
         getUser();
     }, [supabase, router]);
 
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setAvatarFile(file);
+            setAvatarPreview(URL.createObjectURL(file));
+        }
+    };
+
     const toggleInterest = (interest: string) => {
         if (interests.includes(interest)) {
             setInterests(interests.filter((i) => i !== interest));
@@ -50,6 +64,10 @@ export default function OnboardingPage() {
     };
 
     const handleNext = () => {
+        if (step === 0 && (!firstName.trim() || !lastName.trim())) {
+            alert("Please provide your First Name and Last Name.");
+            return;
+        }
         if (step < STEPS.length - 1) {
             setStep(step + 1);
         }
@@ -59,15 +77,38 @@ export default function OnboardingPage() {
         if (!userId) return;
         setLoading(true);
 
+        const displayName = `${firstName} ${lastName}`.trim();
+        let avatarUrl = null;
+
+        if (avatarFile) {
+            const fileExt = avatarFile.name.split(".").pop();
+            const filePath = `${userId}/${crypto.randomUUID()}.${fileExt}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from("avatars")
+                .upload(filePath, avatarFile);
+
+            if (!uploadError) {
+                const { data: { publicUrl } } = supabase.storage
+                    .from("avatars")
+                    .getPublicUrl(filePath);
+                avatarUrl = publicUrl;
+            } else {
+                console.error("Avatar upload failed:", uploadError);
+            }
+        }
+
         const { error } = await supabase
             .from("profiles")
             .update({
                 display_name: displayName,
+                avatar_url: avatarUrl,
                 university,
                 faculty,
                 grade,
                 interests,
                 goal,
+                is_onboarded: true
             })
             .eq("id", userId);
 
@@ -108,14 +149,55 @@ export default function OnboardingPage() {
                     <CardContent className="space-y-4">
                         {step === 0 && (
                             <>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Display Name</label>
-                                    <Input
-                                        placeholder="Your name"
-                                        value={displayName}
-                                        onChange={(e) => setDisplayName(e.target.value)}
-                                    />
+                                {/* Avatar Upload */}
+                                <div className="flex flex-col items-center gap-4 mb-6">
+                                    <Avatar className="h-24 w-24 border-2 border-border">
+                                        <AvatarImage src={avatarPreview || undefined} />
+                                        <AvatarFallback className="text-2xl">
+                                            {firstName && lastName ? `${firstName[0]}${lastName[0]}` : "?"}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex items-center gap-2">
+                                        <label htmlFor="avatar-upload" className="cursor-pointer">
+                                            <div className="flex items-center gap-2 text-sm font-medium hover:underline">
+                                                <Upload className="h-4 w-4" />
+                                                Upload Icon
+                                            </div>
+                                            <input
+                                                id="avatar-upload"
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleAvatarChange}
+                                            />
+                                        </label>
+                                        {avatarPreview && (
+                                            <Button variant="ghost" size="sm" onClick={() => { setAvatarFile(null); setAvatarPreview(null); }}>
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">First Name <span className="text-red-500">*</span></label>
+                                        <Input
+                                            placeholder="Taro"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Last Name <span className="text-red-500">*</span></label>
+                                        <Input
+                                            placeholder="Yamada"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">University</label>
                                     <Input
@@ -123,9 +205,6 @@ export default function OnboardingPage() {
                                         value="Institute of Science Tokyo (東京科学大学)"
                                         className="bg-muted text-muted-foreground"
                                     />
-                                    <p className="text-xs text-muted-foreground">
-                                        Currently limited to Institute of Science Tokyo students.
-                                    </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
@@ -163,9 +242,6 @@ export default function OnboardingPage() {
                                         </Badge>
                                     ))}
                                 </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Selected: {interests.length > 0 ? interests.join(", ") : "None"}
-                                </p>
                             </div>
                         )}
 
