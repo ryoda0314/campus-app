@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useUnreadCount } from "@/hooks/useUnreadCount";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -238,15 +239,29 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 // Desktop Sidebar
 export function Sidebar() {
+    const [userId, setUserId] = useState<string>();
+    const supabase = createClient();
+    const { hasUnread, markAsRead } = useUnreadCount(userId);
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) setUserId(user.id);
+        };
+        getUser();
+    }, [supabase]);
+
     return (
         <div className="hidden md:flex h-full w-64 flex-col border-r bg-card text-card-foreground">
             <div className="flex h-16 items-center justify-between px-6">
                 <h1 className="text-xl font-bold tracking-tight text-primary">
                     SwaLo
                 </h1>
-                <Button variant="ghost" size="icon" className="relative">
+                <Button variant="ghost" size="icon" className="relative" onClick={markAsRead}>
                     <Bell className="h-5 w-5 text-muted-foreground" />
-                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
+                    {hasUnread && (
+                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-destructive animate-pulse" />
+                    )}
                 </Button>
             </div>
             <SidebarContent />
@@ -257,6 +272,17 @@ export function Sidebar() {
 // Mobile Sidebar (Hamburger Menu)
 export function MobileSidebar() {
     const [open, setOpen] = useState(false);
+    const [userId, setUserId] = useState<string>();
+    const supabase = createClient();
+    const { hasUnread, markAsRead } = useUnreadCount(userId);
+
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) setUserId(user.id);
+        };
+        getUser();
+    }, [supabase]);
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -274,9 +300,11 @@ export function MobileSidebar() {
                     <SheetDescription className="sr-only">
                         Mobile navigation menu
                     </SheetDescription>
-                    <Button variant="ghost" size="icon" className="relative mr-8">
+                    <Button variant="ghost" size="icon" className="relative mr-8" onClick={markAsRead}>
                         <Bell className="h-5 w-5 text-muted-foreground" />
-                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
+                        {hasUnread && (
+                            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-destructive animate-pulse" />
+                        )}
                     </Button>
                 </SheetHeader>
                 <div className="flex flex-col h-[calc(100%-65px)]">
